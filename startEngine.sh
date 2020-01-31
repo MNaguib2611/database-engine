@@ -1,7 +1,5 @@
 #! /usr/bin/bash
 
-loggedUser=`users |cut -f1 -d" "`;
-
 
 echo "";
 echo "***********************************************************************************";
@@ -31,7 +29,7 @@ queryType=$(echo $fullQuery | awk '{print $1}');
 DATABASENAME=$(echo $fullQuery | awk '{print $3}');
 case $queryType in
 "list")
- . /home/$loggedUser/bashScriptProject/listDataBases.sh;
+ . /home/$LOGNAME/bashScriptProject/listDataBases.sh;
 ;;
 
 "create") 
@@ -40,7 +38,7 @@ case $queryType in
 	   echo "Syntax error -it should be => create database (Database name here)";    
 	 
 	else
-            . /home/$loggedUser/bashScriptProject/createDataBase.sh ;  
+            . /home/$LOGNAME/bashScriptProject/createDataBase.sh ;  
 	fi
  
 ;;
@@ -52,7 +50,7 @@ clear ;
 	 echo "Syntax error -it should be  => connect to (Database name here)";       
 	  
 	else
-           . /home/$loggedUser/bashScriptProject/connectToDataBase.sh ;
+           . /home/$LOGNAME/bashScriptProject/connectToDataBase.sh ;
 	fi
 ;;
 
@@ -62,7 +60,7 @@ if test -z "$DATABASENAME"
 	then
 	   echo "Syntax error -it should be =>  drop database (Database name here)";   	  
 	else
-           . /home/$loggedUser/bashScriptProject/dropDataBase.sh ;
+           . /home/$LOGNAME/bashScriptProject/dropDataBase.sh ;
 	fi
 ;;
 
