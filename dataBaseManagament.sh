@@ -130,7 +130,7 @@ case $queryType in
    ;;
 
 "drop") 
-  if [[ $3 == "databases" ]]
+  if [[ $3 == "database" ]]
    then
       dropDatabase $4 
    else
