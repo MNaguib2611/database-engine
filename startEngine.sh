@@ -1,97 +1,57 @@
-#! /usr/bin/bash
+#! /bin/bash
+##! /usr/bin/bash
 
+startLocation=$PWD
+#to print the word Engine DB
+./design.sh
 
-echo "";
-echo "***********************************************************************************";
-echo "***********************************************************************************";
-echo "***********************************************************************************";
-echo "***********************************************************************************";
-echo "***********************************************************************************";
-echo "**********  Welcome To EngineDB  **********";
-echo "";
+#to create "main dir" for the project it will contain all DBs & tables 
+cd $Home;
+dataBaseLocation="DBScript"
+if [[ -e $dataBaseLocation ]]
+then 
+   cd $dataBaseLocation;
+   echo "################################# wellcome Back ################################";
+else
+   mkdir $dataBaseLocation;
+   echo "### wellcome ###";
+fi
 
 
 
 while true 
 do
+
 echo "";
-echo " list databases ";
-echo " create database ";
-echo " connect to database";
-echo " drop database";
-echo " exit"
+echo "List Databases ";
+echo "Connect to Database";
+echo "Create Database ";
+echo "Drop Database";
+echo "Exit";
+echo "help -> 'h'";
+echo -e "Please write your Query : \c ";
 
-echo "Please write your Query : ";
 
+read query;
+#echo "${y^^}"
+query=${query,,}
+#echo $query
+#sleep 5
+echo ""
+case $query in
+"h")
+   . $startLocation/help.sh $startLocation ;;
 
-read fullQuery;
-queryType=$(echo $fullQuery | awk '{print $1}');
-DATABASENAME=$(echo $fullQuery | awk '{print $3}');
-case $queryType in
-"list")
- . /home/$LOGNAME/bashScriptProject/listDataBases.sh;
-;;
+"exit")
+   echo "System shudown ^_^" 
+   exit ;;
 
-"create") 
-	if test -z "$DATABASENAME"
-	then
-	   echo "Syntax error -it should be => create database (Database name here)";    
-	 
-	else
-            . /home/$LOGNAME/bashScriptProject/createDataBase.sh ;  
-	fi
- 
-;;
-
-"connect") 
-clear ;   
- if test -z "$DATABASENAME"
-	then
-	 echo "Syntax error -it should be  => connect to (Database name here)";       
-	  
-	else
-           . /home/$LOGNAME/bashScriptProject/connectToDataBase.sh ;
-	fi
-;;
-
-"drop") 
- clear ;   
-if test -z "$DATABASENAME"
-	then
-	   echo "Syntax error -it should be =>  drop database (Database name here)";   	  
-	else
-           . /home/$LOGNAME/bashScriptProject/dropDataBase.sh ;
-	fi
-;;
-
-"exit")  
-  echo " bye...";	
-  echo "Exiting ................";
-	break
-;;
-
-*) 
- clear ; 
-echo "**********  Welcome To EngineDB  **********";
-  echo "Please Check your synax and try again";
-;;
+*)
+   #echo $query;
+   . $startLocation/dataBaseManagament.sh $startLocation $query ;;
 
 esac
 done
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -111,3 +71,4 @@ done
 # exit    to exit the database engine
 #
 #
+

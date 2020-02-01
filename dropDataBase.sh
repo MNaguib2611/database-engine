@@ -1,4 +1,5 @@
-#! /usr/bin/bash
+#! /bin/bash
+##! /usr/bin/bash
 
 
 echo "Are you sure you want to drop $DATABASENAME database? [y/n]";
