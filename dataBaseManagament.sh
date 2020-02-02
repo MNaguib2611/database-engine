@@ -3,6 +3,7 @@
 
 Red='\033[0;31m'
 Green='\033[0;32m'
+Brown='\033[0;33m'
 Yellow='\033[1;33m'
 NC='\033[0m' # No Color
 
@@ -18,10 +19,8 @@ function listDatabases()
         echo "Empty"
         continue
       else
-
          IFS='/' read -ra my_array <<< "$d"
-         echo ${my_array[0]}
-      
+         echo -e "${Brown} ${my_array[0]} ${NC}"
     fi
     done
     echo "###############"
@@ -105,7 +104,7 @@ function dropDatabase()
          #echo "1";
          rm -r $databaseName;
             echo "------------------------"
-            echo -e "${Green}$databaseName has been deleted ${NC}"
+            echo -e "${Green}$databaseName db has been deleted ${NC}"
             echo "------------------------"
 
       else

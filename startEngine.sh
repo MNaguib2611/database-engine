@@ -5,7 +5,6 @@
 
 
 
-pwd
 startLocation=$PWD
 export startLocation;
 #to print the word Engine DB
@@ -51,6 +50,9 @@ case $query in
 "h")
    . $startLocation/help.sh $startLocation ;;
 
+"clear") 
+   . $startLocation/design.sh
+   ;;
 "exit")
    echo "System shudown ^_^" 
    #exit
