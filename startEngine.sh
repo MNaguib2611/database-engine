@@ -1,6 +1,11 @@
-#! /bin/bash
-##! /usr/bin/bash
+##! /bin/bash
+#! /usr/bin/bash
 
+
+
+
+
+pwd
 startLocation=$PWD
 #to print the word Engine DB
 ./design.sh
@@ -37,14 +42,18 @@ read query;
 query=${query,,}
 #echo $query
 #sleep 5
+
+
+
 echo ""
 case $query in
 "h")
    . $startLocation/help.sh $startLocation ;;
 
 "exit")
-   echo "System shudown ^_^" 
-   exit ;;
+   echo "System shudown ^_^"
+   cd $startLocation
+   break ;;
 
 *)
    #echo $query;

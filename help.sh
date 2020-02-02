@@ -1,5 +1,5 @@
-#! /bin/bash
-##! /usr/bin/bash
+##! /bin/bash
+#! /usr/bin/bash
 
 startLocation=$1;
 clear

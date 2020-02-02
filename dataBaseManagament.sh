@@ -1,5 +1,10 @@
-#! /bin/bash
-##! /usr/bin/bash
+##! /bin/bash
+#! /usr/bin/bash
+
+Red='\033[0;31m'
+Green='\033[0;32m'
+Yellow='\033[1;33m'
+NC='\033[0m' # No Color
 
 function listDatabases()
 {   
@@ -29,7 +34,7 @@ function connectToDatabase()
          #echo "1";
          cd $databaseName
          echo "-------------------------------"
-         echo "connected to $databaseName db "
+         echo -e "${Green}  connected to $databaseName db ${NC}"
          echo "-------------------------------"
          #ls -l 
          #sleep 5
@@ -39,7 +44,7 @@ function connectToDatabase()
       #echo "0";
       
          echo "-----------------------------"
-         echo "$databaseName db is not exist"
+         echo -e "${Yellow} $databaseName db does not exist ${NC}"
          echo "-----------------------------"
     fi
 }
@@ -52,14 +57,14 @@ function createDatabase()
     then
       #echo "1";
          echo "---------------------------"
-         echo "the database already exists"
+         echo -e "${Yellow}the database already exists ${NC}"
          echo "---------------------------"
 
     else
       #echo "0";
          mkdir $databaseName
          echo "---------------------------"
-         echo "$databaseName db is created"
+         echo -e "${Green} $databaseName db has been created ${NC}"
          echo "---------------------------"
     fi
 }
@@ -71,13 +76,13 @@ function dropDatabase()
       #echo "1";
         rm -r $databaseName;
          echo "------------------------"
-         echo "$databaseName is deleted"
+         echo -e "${Green} $databaseName has been deleted ${NC}"
          echo "------------------------"
 
     else
       #echo "0";
          echo "------------------------------"
-         echo "$databaseName db doesn't exist"
+         echo -e "${Yellow} $databaseName db doesn't exist ${NC}"
          echo "------------------------------"
     fi
 
@@ -100,7 +105,7 @@ case $queryType in
     listDatabases 
    else
     echo "-------------------------------------"
-    echo "Please Check your synax and try again"
+    echo -e "${Red}Please Check your synax and try again ${NC}"
     echo "-------------------------------------"
    fi
    ;;
@@ -115,7 +120,7 @@ case $queryType in
        if [[ -z $4 ]]
        then        
          echo "-------------------------------------"
-         echo "Please Check your synax and try again"
+          echo -e "${Red}Please Check your synax and try again ${NC}"
          echo "-------------------------------------"        
        else
           #echo "name $4"
@@ -124,7 +129,7 @@ case $queryType in
           
    else
     echo "-------------------------------------"
-    echo "Please Check your synax and try again"
+    echo -e "${Red}Please Check your synax and try again ${NC}"
     echo "-------------------------------------"
    fi
    ;;
@@ -135,7 +140,7 @@ case $queryType in
       dropDatabase $4 
    else
     echo "-------------------------------------"
-    echo "Please Check your synax and try again"
+    echo -e "${Red}Please Check your synax and try again ${NC}"
     echo "-------------------------------------"
    fi
    ;;
@@ -143,7 +148,7 @@ case $queryType in
 *) 
    . $startLocation/design.sh
    echo "-------------------------------------"
-   echo "Please Check your synax and try again"
+   echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"
    ;;
 esac
