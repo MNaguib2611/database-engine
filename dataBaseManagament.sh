@@ -13,7 +13,9 @@ function listDatabases()
         echo "Empty"
         continue
       else
-        echo $d
+
+         IFS='/' read -ra my_array <<< "$d"
+         echo ${my_array[0]}
       
     fi
     done
@@ -22,68 +24,96 @@ function listDatabases()
 
 function connectToDatabase()
 {
-    databaseName=$1
+   databaseName=$1
+   databaseNameLen=`echo -n $databaseName | wc -m`
+   if [[ $databaseNameLen != 0 ]]
+   then
+      if [ -d "$databaseName" ];
+      then
+            #echo "1";
+            cd $databaseName
+            echo "-------------------------------"
+            echo "connected to $databaseName db "
+            echo "-------------------------------"
+            . $startLocation/dataTableManagament.sh $startLocation $databaseName
 
-    if [ -d "$databaseName" ];
-    then
-         #echo "1";
-         cd $databaseName
-         echo "-------------------------------"
-         echo "connected to $databaseName db "
-         echo "-------------------------------"
-         . $startLocation/dataTableManagament.sh $startLocation $databaseName
+            #ls -l 
+            #sleep 5
+            #echo "here now $PWD" 
 
-         #ls -l 
-         #sleep 5
-         #echo "here now $PWD" 
-
-
-
+      else
+         #echo "0";
+         
+            echo "-----------------------------"
+            echo "$databaseName db is not exist"
+            echo "-----------------------------"
+      fi
+                 
     else
-      #echo "0";
-      
-         echo "-----------------------------"
-         echo "$databaseName db is not exist"
-         echo "-----------------------------"
-    fi
+    echo "-------------------------------------"
+    echo "Please Check your synax and try again"
+    echo "-------------------------------------"
+     fi
+    
 }
 
 function createDatabase()
 {
-    databaseName=$1
 
-    if [ -d "$databaseName" ];
-    then
-      #echo "1";
-         echo "---------------------------"
-         echo "the database already exists"
-         echo "---------------------------"
+   databaseName=$1
+   databaseNameLen=`echo -n $databaseName | wc -m`
+   if [[ $databaseNameLen != 0 ]]
+   then
+      if [ -d "$databaseName" ];
+      then
+         #echo "1";
+            echo "---------------------------"
+            echo "the database already exists"
+            echo "---------------------------"
 
+      else
+         #echo "0";
+            mkdir $databaseName
+            echo "---------------------------"
+            echo "$databaseName db is created"
+            echo "---------------------------"
+      fi
+                 
     else
-      #echo "0";
-         mkdir $databaseName
-         echo "---------------------------"
-         echo "$databaseName db is created"
-         echo "---------------------------"
-    fi
+    echo "-------------------------------------"
+    echo "Please Check your synax and try again"
+    echo "-------------------------------------"
+   fi
+ 
 }
 function dropDatabase()
 {
-    databaseName=$1
-    if [ -d "$databaseName" ];
-    then
-      #echo "1";
-        rm -r $databaseName;
-         echo "------------------------"
-         echo "$databaseName is deleted"
-         echo "------------------------"
+    
+   databaseName=$1
+   databaseNameLen=`echo -n $databaseName | wc -m`
+   if [[ $databaseNameLen != 0 ]]
+   then
+         databaseName=$1
+      if [ -d "$databaseName" ];
+      then
+         #echo "1";
+         rm -r $databaseName;
+            echo "------------------------"
+            echo "$databaseName is deleted"
+            echo "------------------------"
 
+      else
+         #echo "0";
+            echo "------------------------------"
+            echo "$databaseName db doesn't exist"
+            echo "------------------------------"
+      fi
+                 
     else
-      #echo "0";
-         echo "------------------------------"
-         echo "$databaseName db doesn't exist"
-         echo "------------------------------"
-    fi
+    echo "-------------------------------------"
+    echo "Please Check your synax and try again"
+    echo "-------------------------------------"
+   fi
 
 }
 

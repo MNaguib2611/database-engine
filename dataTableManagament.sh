@@ -45,9 +45,36 @@ query=${query,,}
 #echo $query
 #sleep 5
 
+queryType=$(echo $query | awk '{print $1}');
 echo ""
 
-case $query in
+case $queryType in
+"create")
+     syntaxTableWord=$(echo $query | awk '{print $2}');
+
+      if [[ $syntaxTableWord == "table" ]]
+      then
+         tableName=$(echo $query | awk '{print $3}');
+         tableNameLen=`echo -n $tableName | wc -m`
+
+         if [[ $tableNameLen != 0 ]]
+         then
+            createTable $tableNameLen
+         else
+          echo "-------------------------------------"
+          echo "Please Check your synax and try again"
+          echo "-------------------------------------"
+         fi
+      else
+      echo "-------------------------------------"
+      echo "Please Check your synax and try again"
+      echo "-------------------------------------"
+      fi
+      
+
+
+      
+      ;;
 "h")
    . $startLocation/help.sh $startLocation ;;
 

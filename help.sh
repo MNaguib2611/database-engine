@@ -12,5 +12,6 @@ echo "you can list all databases -> SHOW DATABASES "
 echo "you can connect to database -> USE dbName "
 echo "you can create database -> CREATE DATABASE dbName "
 echo "you can drop database -> DROP DATABASE dbName "
+echo "you can create table -> CREATE TABLE tableName "
 echo "##########################################"
 sleep 5
