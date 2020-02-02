@@ -23,8 +23,8 @@ else
 fi
 
 
-
-while true 
+endLoop=0
+while (( $endLoop == 0 ))
 do
 
 echo "";
@@ -51,9 +51,10 @@ case $query in
    . $startLocation/help.sh $startLocation ;;
 
 "exit")
-   echo "System shudown ^_^"
-   cd $startLocation
-   break ;;
+   echo "System shudown ^_^" 
+   #exit
+   endLoop=$(( endLoop+1 ))	
+    ;;
 
 *)
    #echo $query;
