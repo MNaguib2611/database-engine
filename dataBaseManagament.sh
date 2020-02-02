@@ -31,9 +31,13 @@ function connectToDatabase()
          echo "-------------------------------"
          echo "connected to $databaseName db "
          echo "-------------------------------"
+         . $startLocation/dataTableManagament.sh $startLocation $databaseName
+
          #ls -l 
          #sleep 5
          #echo "here now $PWD" 
+
+
 
     else
       #echo "0";

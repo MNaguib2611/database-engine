@@ -18,8 +18,8 @@ else
 fi
 
 
-
-while true 
+endLoop=0
+while (( $endLoop == 0 ))
 do
 
 echo "";
@@ -44,7 +44,9 @@ case $query in
 
 "exit")
    echo "System shudown ^_^" 
-   exit ;;
+   #exit
+   endLoop=$(( endLoop+1 ))	
+    ;;
 
 *)
    #echo $query;
