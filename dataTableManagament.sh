@@ -81,6 +81,7 @@ case $queryType in
 "exit")
    echo "System shudown ^_^" 
    #exit
+   cd $startLocation;
    endLoop=$(( endLoop+1 ))	
     ;;
 *) 

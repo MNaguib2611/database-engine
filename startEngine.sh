@@ -7,6 +7,7 @@
 
 pwd
 startLocation=$PWD
+export startLocation;
 #to print the word Engine DB
 ./design.sh
 
@@ -53,6 +54,7 @@ case $query in
 "exit")
    echo "System shudown ^_^" 
    #exit
+   cd $startLocation;
    endLoop=$(( endLoop+1 ))	
     ;;
 
