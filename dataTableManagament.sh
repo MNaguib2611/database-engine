@@ -9,8 +9,14 @@ function listTableData()
 
 function createTable()
 {
- echo "createTable"
-    
+   tableName=$1;
+   queryReformat=$2;
+   echo "createTable"
+   #echo "$tableName"
+   #echo "$queryReformat"
+   #echo "heree ${queryReformat[0]}"
+
+echo "################################"    
 }
 function dropTable()
 {
@@ -21,17 +27,18 @@ function dropTable()
 startLocation=$1;
 databaseName=$2;
 
+echo "";
+echo "################################"
+echo "you are now in $databaseName db";
+echo "################################"
+echo "";
 
 
 endLoop=0
 while (( $endLoop == 0 ))
 do
 
-echo "";
-echo "################################"
-echo "you are now in $databaseName db";
-echo "################################"
-echo "";
+
 echo "";
 
 echo "enter you query";
@@ -39,27 +46,38 @@ echo "help -> 'h'";
 echo "Exit";
 echo -e "Please write your Query : \c ";
 read query;
+IFS=' ' read -r -a arr <<< "$query"
 
 #echo "${y^^}"
 query=${query,,}
 #echo $query
 #sleep 5
 
-queryType=$(echo $query | awk '{print $1}');
-echo ""
+queryReformat=""
+charDelimiter=","
+ for i in "${arr[@]}"
+   do
+    #echo $i
+    queryReformat+="$i"
+    queryReformat+="$charDelimiter"
+   done
+
+#echo "heree ${arr[0]}"
+queryType=${arr[0]};
+
 
 case $queryType in
 "create")
-     syntaxTableWord=$(echo $query | awk '{print $2}');
-
+     syntaxTableWord=${arr[1]};
+     
       if [[ $syntaxTableWord == "table" ]]
       then
-         tableName=$(echo $query | awk '{print $3}');
-         tableNameLen=`echo -n $tableName | wc -m`
-
-         if [[ $tableNameLen != 0 ]]
+         tableName=${arr[2]};
+        
+         if [[ $tableName ]]
          then
-            createTable $tableNameLen
+           #echo $queryReformat
+            createTable $tableName $queryReformat
          else
           echo "-------------------------------------"
           echo "Please Check your synax and try again"
