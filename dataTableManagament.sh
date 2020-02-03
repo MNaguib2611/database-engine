@@ -27,12 +27,19 @@ function listTables
 
 function createTable
 {
+   # create table tableName ( c1 text notnull , c2 int null )
    tableName=$1;
    queryReformat=$2;
-   echo "createTable"
+   IFS=':' read -ra ADDR <<< "$queryReformat"
+   
+   for i in "${ADDR[@]}"; do
+     echo "$i" 
+   done
+
+   #echo "createTable"
+
    #echo "$tableName"
    #echo "$queryReformat"
-   #echo "heree ${queryReformat[0]}"
 
 echo "################################"    
 }
@@ -78,12 +85,18 @@ query=${query,,}
 #sleep 5
 
 queryReformat=""
-charDelimiter=","
+charDelimiter=":"
+createFormatError=0
  for i in "${arr[@]}"
+   #echo $i
    do
-    #echo $i
-    queryReformat+="$i"
-    queryReformat+="$charDelimiter"
+   if [ $i == ":" ]
+   then 
+      createFormatError+=1
+   else
+      queryReformat+="$i"
+      queryReformat+="$charDelimiter"
+   fi
    done
 
 #echo "heree ${arr[0]}"
@@ -92,7 +105,7 @@ queryType=${arr[0]};
 
 case $queryType in
 "create")
-syntaxTableWord=${arr[1]};
+   syntaxTableWord=${arr[1]};
    if [[ $syntaxTableWord == "table" ]]
    then
       tableName=${arr[2]};
@@ -100,7 +113,15 @@ syntaxTableWord=${arr[1]};
       if [[ $tableName ]]
       then
          #echo $queryReformat
+         if (( $createFormatError != 0 ))
+         then
+            echo "-------------------------------------"
+            echo -e "${Red}Please Check your synax and try again ${NC}"
+            echo "-------------------------------------"
+         else
          createTable $tableName $queryReformat
+         fi
+
       else
          echo "-------------------------------------"
          echo -e "${Red}Please Check your synax and try again ${NC}"
