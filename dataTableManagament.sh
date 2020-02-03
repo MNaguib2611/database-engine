@@ -30,6 +30,9 @@ function createTable
    # create table tableName ( c1 text notnull , c2 int null )
    tableName=$1;
    queryReformat=$2;
+   queryReformatLength=$3
+
+   #echo $queryReformatLength
    IFS=':' read -ra ADDR <<< "$queryReformat"
    
    for i in "${ADDR[@]}"; do
@@ -49,7 +52,7 @@ function dropTable
  echo $1
 }
 
- startLocation=$1;
+startLocation=$1;
 databaseName=$2;
 
 function currentDatabase
@@ -85,11 +88,15 @@ query=${query,,}
 #sleep 5
 
 queryReformat=""
+queryReformatLength=0
+
 charDelimiter=":"
 createFormatError=0
+
  for i in "${arr[@]}"
    #echo $i
    do
+   queryReformatLength=$(( queryReformatLength+1))
    if [ $i == ":" ]
    then 
       createFormatError+=1
@@ -119,7 +126,7 @@ case $queryType in
             echo -e "${Red}Please Check your synax and try again ${NC}"
             echo "-------------------------------------"
          else
-         createTable $tableName $queryReformat
+         createTable $tableName $queryReformat $queryReformatLength
          fi
 
       else
