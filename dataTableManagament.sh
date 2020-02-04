@@ -132,20 +132,22 @@ function createTable
       echo "-------------------------------------"
       echo -e "${Red}Please Check your synax and try again ${NC}"
       echo "-------------------------------------"
-   fi
-
-
-   #echo "createTable"
-
-   #echo "$tableName"
-   #echo "$queryReformat"
-
-echo "################################"    
+   fi 
 }
 
 function dropTable
 {
  echo $1
+}
+
+function insertIntoTable
+{   
+  
+queryReformat=$1 
+queryReformatLength=$2
+echo $queryReformat
+echo $queryReformatLength
+
 }
 
 startLocation=$1;
@@ -197,28 +199,54 @@ createFormatError=0
    then 
       createFormatError+=1
    else
+      i=${i,,}
       queryReformat+="$i"
       queryReformat+="$charDelimiter"
    fi
    done
 
 #echo "heree ${arr[0]}"
-queryType=${arr[0]};
+queryType=${arr[0]}
+queryType=${queryType,,}
+queryPartTable=${arr[1]}
+queryPartTable=${queryPartTable,,}
+queryPartTableName=${arr[2]}
 
 
 case $queryType in
-"create")
-   syntaxTableWord=${arr[1]};
-   if [[ $syntaxTableWord == "table" ]]
+"insertinto")
+   if [[ $queryPartTable == "table" ]]
    then
-      tableName=${arr[2]};
+      if [[ -d  "$queryPartTableName" ]]
+      then 
       
-      if [[ $tableName ]]
+       insertIntoTable queryReformat queryReformatLength
+
+
+      else
+      echo "-------------------------------------"
+      echo -e "${Red}No such Table ${NC}"
+      echo "-------------------------------------"
+      fi
+     
+   else      
+   echo "-------------------------------------"
+   echo -e "${Red}Please Check your synax and try agains ${NC}"
+   echo "-------------------------------------"
+   fi
+   ;;
+
+      
+
+"create")
+   if [[ $queryPartTable == "table" ]]
+   then
+      if [[ $queryPartTableName ]]
       then
       tableNameExist=0;        
          for d in */
          do
-            if [[ $d == $tableName ]]
+            if [[ $d == $queryPartTableName ]]
             then
             tableNameExist=1;
             continue
@@ -239,7 +267,7 @@ case $queryType in
                echo -e "${Red}Please Check your synax and try again ${NC}"
                echo "-------------------------------------"
             else
-            createTable $tableName $queryReformat $queryReformatLength
+            createTable $queryPartTableName $queryReformat $queryReformatLength
             fi
          fi
 
@@ -255,7 +283,9 @@ case $queryType in
    fi 
    ;;
 "show")
-   if [[ ${arr[1]} == "tables" ]]
+   queryPartTables=${arr[1]}
+   queryPartTables=${queryPartTables,,}
+   if [[ queryPartTables == "tables" ]]
    then
     listTables 
    else
@@ -266,13 +296,11 @@ case $queryType in
    ;;
 
    "drop")
-   if [[ ${arr[1]} == "table" ]]
+   if [[ queryPartTable == "table" ]]
    then
-       tableName=${arr[2]};
-       tableName+=".data";
-      if [[ -f  "$tableName" ]];
+      if [[ -d  "$queryPartTableName" ]];
       then 
-          rm -f "$tableName";
+          rm -f "$queryPartTableName";
           echo "------------------------"
             echo -e "${Green} ${arr[2]} table has been deleted ${NC}"
             echo "------------------------"
@@ -301,7 +329,7 @@ case $queryType in
     ;;
 *) 
    . $startLocation/design.sh
-   currentDatabasee
+   currentDatabase
    echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"
