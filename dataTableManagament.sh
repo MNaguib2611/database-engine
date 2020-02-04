@@ -27,7 +27,9 @@ function listTables
 
 function createTable
 {
-   # create table tableName ( c1 text notnull , c2 int null )
+   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    tableName=$1;
    queryReformat=$2;
    queryReformatLength=$3
@@ -35,9 +37,103 @@ function createTable
    #echo $queryReformatLength
    IFS=':' read -ra ADDR <<< "$queryReformat"
    
-   for i in "${ADDR[@]}"; do
-     echo "$i" 
-   done
+   #for i in "${ADDR[@]}"; 
+   #do
+   #  echo "$i" 
+   #done
+  checkFormat=4
+  if [[ ${ADDR[3]} == "(" ]]
+    then 
+    loopend=$(( queryReformatLength-1 ))
+    for ((i = 4; i < $loopend ;));
+     do 
+     i=$(( i+1 ))
+     checkFormat=$(( checkFormat+1 ))
+     if [ "${ADDR[i]}" = "int" ] || [ "${ADDR[i]}" = "text" ]
+     then
+         i=$(( i+1 ))
+         checkFormat=$(( checkFormat+1 ))
+         if [ "${ADDR[i]}" = "notNull" ] || [ "${ADDR[i]}" = "Null" ]
+         then
+         i=$(( i+1 ))
+         checkFormat=$(( checkFormat+1 ))
+         
+         else
+            echo "-------------------------------------"
+            echo -e "${Red}Please Check your synax and try again ${NC}"
+            echo "-------------------------------------" 
+         fi
+
+     else
+       echo "-------------------------------------"
+       echo -e "${Red}Please Check your synax and try again ${NC}"
+       echo -e "${Red}Hint : maybe forget '(' ${NC}"
+       echo "-------------------------------------" 
+     fi
+     #echo ${ADDR[$i]}; 
+     #i=$(( i+2))
+     done
+
+  echo $checkFormat 
+  echo $loopend  
+   if (( $checkFormat == $loopend ))    
+      then
+         if [[ ${ADDR[loopend]} == ")" ]]
+         then 
+            if [ -d "$tableName" ];
+               then
+                  echo "---------------------------"
+                  echo -e "${Yellow}the table already exists ${NC}"
+                  echo "---------------------------"
+
+               else
+                  #echo "done"
+                  mkdir $tableName
+                  cd $tableName
+                  touch data.txt 
+                  touch meta.txt 
+                  chmod +wrx *.txt
+
+   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   
+                  for ((i = 4; i < $loopend ;));
+                  do 
+                 
+                 
+                  echo  "${ADDR[$i]}:${ADDR[$((i+1))]}:${ADDR[$((i+2))]} " >> meta.txt
+                  i=$(( i+3 ))
+                  done
+
+                  cd ..
+                  echo "---------------------------"
+                  echo -e "${Green} $tableName table has been created ${NC}"
+                  echo "---------------------------"                
+
+               fi
+                     
+
+         else
+            echo "-------------------------------------"
+            echo -e "${Red}Please Check your synax and try again ${NC}"
+            echo -e "${Red}Hint : maybe forget ')' ${NC}"
+            echo "-------------------------------------"
+         fi
+
+      else
+            echo "-------------------------------------"
+            echo -e "${Red}Please Check your synax and try again ${NC}"
+            echo "-------------------------------------"
+
+      fi
+
+   else
+      echo "-------------------------------------"
+      echo -e "${Red}Please Check your synax and try again ${NC}"
+      echo "-------------------------------------"
+   fi
+
 
    #echo "createTable"
 
@@ -119,14 +215,32 @@ case $queryType in
       
       if [[ $tableName ]]
       then
-         #echo $queryReformat
-         if (( $createFormatError != 0 ))
+      tableNameExist=0;        
+         for d in */
+         do
+            if [[ $d == $tableName ]]
+            then
+            tableNameExist=1;
+            continue
+            fi
+         done            
+
+         if (( $tableNameExist != 0  ))    
          then
-            echo "-------------------------------------"
-            echo -e "${Red}Please Check your synax and try again ${NC}"
-            echo "-------------------------------------"
+            echo "---------------------------"
+            echo -e "${Yellow}the table already exists ${NC}"
+            echo "---------------------------"
          else
-         createTable $tableName $queryReformat $queryReformatLength
+
+            #echo $queryReformat
+            if (( $createFormatError != 0  ))
+            then
+               echo "-------------------------------------"
+               echo -e "${Red}Please Check your synax and try again ${NC}"
+               echo "-------------------------------------"
+            else
+            createTable $tableName $queryReformat $queryReformatLength
+            fi
          fi
 
       else
@@ -135,9 +249,9 @@ case $queryType in
          echo "-------------------------------------"
       fi
    else
-   echo "-------------------------------------"
+      echo "-------------------------------------"
       echo -e "${Red}Please Check your synax and try again ${NC}"
-   echo "-------------------------------------"
+      echo "-------------------------------------"
    fi 
    ;;
 "show")

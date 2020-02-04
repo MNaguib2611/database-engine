@@ -14,7 +14,7 @@ echo "you can create database -> CREATE DATABASE dbName "
 echo "you can drop database -> DROP DATABASE dbName "
 echo "you can create table -> 
 CREATE TABLE tableName 
-( colum1Name colum1DataType notNull/Null , colum2Name colum2DataType notNull/Null ,...etc) "
+( colum1Name colum1DataType notNull/Null colum2Name colum2DataType notNull/Null ,...etc) "
 echo "you can make primary key -> setpk onTable tableName columnName
 Notes:- 
 - Allow one pk for every table 
