@@ -126,7 +126,12 @@ case $queryType in
    if [[ $syntaxTableWord == "table" ]]
    then
       tableName=${arr[2]};
-      
+      if [[ $tableName != +([[:alnum:]]) ]]; then
+		echo 
+		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+		continue
+	fi
+
       if [[ $tableName ]]
       then
          #echo $queryReformat

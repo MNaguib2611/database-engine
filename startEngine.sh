@@ -52,6 +52,7 @@ case $query in
 
 "clear") 
    . $startLocation/design.sh
+    echo -e "${NC}"
    ;;
 "exit")
    echo -e "${Red}System shudown ^_^ ${NC}" 

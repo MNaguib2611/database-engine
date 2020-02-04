@@ -43,17 +43,15 @@ function connectToDatabase()
 
       else
          #echo "0";
-         
             echo "-----------------------------"
-            echo -e "${Red} $ please enter database name${NC}"
+	    echo -e "${Red} $databaseName db does not exist ${NC}"
             echo "-----------------------------"
       fi
                  
     else
       #echo "0";
-      
          echo "-----------------------------"
-         echo -e "${Red} $databaseName db does not exist ${NC}"
+          echo -e "${Red} $ please enter database name${NC}"
          echo "-----------------------------"
     fi
 }
@@ -70,7 +68,7 @@ function createDatabase()
 	
 	#disallowing special characters in db names
 	#if [[ $databaseName == *['!'@#\$%^\&*()-+\.\/]* ]]; then
-	if [[ $databaseName != +([A-Za-z0-9]) ]]; then
+	if [[ $databaseName != +([[:alnum:]]) ]]; then
 		echo 
 		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
 		continue
