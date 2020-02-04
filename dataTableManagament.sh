@@ -152,6 +152,12 @@ queryReformat=$1
 queryReformatLength=$2
 echo $queryReformat
 echo $queryReformatLength
+
+while IFS= read -r line
+do
+  echo "$line"
+done < meta.txt
+
 }
 
 
@@ -217,12 +223,15 @@ queryPartTableName=${arr[2]}
 
 case $queryType in
 "insertinto")
+     #echo $queryReformat
+     #echo $queryReformatLength
+     #sleep 6
    if [[ $queryPartTable == "table" ]]
    then
       if [[ -d  "$queryPartTableName" ]]
       then 
-      
-       insertIntoTable queryReformat queryReformatLength
+       cd $queryPartTableName
+       insertIntoTable $queryReformat $queryReformatLength
 
 
       else
