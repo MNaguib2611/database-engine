@@ -4,7 +4,7 @@
 function listTables
 {   
    echo "Tables list"
-    echo -e "###############${Brown}"
+    echo -e "###############${LBlue}"
     for f in *.data
     do
       if [[ $f == "*.data" ]]
@@ -24,28 +24,33 @@ function listTables
 # }
 
 
-
+function selectFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "select"
+}
+function deleteFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "Delete"
+}
 
  
 
 function createTable
 {
-   # create table tableName33 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName55 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    tableName=$1;
    queryReformat=$2;
    queryReformatLength=$3
 
-   #echo $queryReformatLength
    IFS=':' read -ra ADDR <<< "$queryReformat"
-   
-   #for i in "${ADDR[@]}"; 
-   #do
-   #  echo "$i" 
-   #done
-  checkFormat=4
-  if [[ ${ADDR[3]} == "(" ]]
+   checkFormat=4
+   if [[ ${ADDR[3]} == "(" ]]
     then 
     loopend=$(( queryReformatLength-1 ))
     for ((i = 4; i < $loopend ;));
@@ -73,12 +78,9 @@ function createTable
        echo -e "${Red}Hint : maybe forget '(' ${NC}"
        echo "-------------------------------------" 
      fi
-     #echo ${ADDR[$i]}; 
-     #i=$(( i+2))
+    
      done
 
-  #echo $checkFormat 
-  #echo $loopend  
    if (( $checkFormat == $loopend ))    
       then
          if [[ ${ADDR[loopend]} == ")" ]]
@@ -135,7 +137,8 @@ function createTable
       echo "-------------------------------------"
       echo -e "${Red}Please Check your synax and try again ${NC}"
       echo "-------------------------------------"
-   fi  
+   fi
+
 }
 
 function dropTable
@@ -145,27 +148,12 @@ function dropTable
 
 function insertIntoTable
 {   
-  
 queryReformat=$1 
 queryReformatLength=$2
 echo $queryReformat
 echo $queryReformatLength
-
 }
 
-
-function selectFromTable
-{   
-   #$1->tableName
-   #$2 ->condition
-   echo "select"
-}
-function deleteFromTable
-{   
-   #$1->tableName
-   #$2 ->condition
-   echo "Delete"
-}
 
 
 startLocation=$1;
@@ -176,7 +164,6 @@ function currentDatabase
 echo "";
 echo "################################"
 echo -e "${Green} you are now in $databaseName db ${NC}";
-
 echo "################################"
 echo "";
 }
@@ -188,13 +175,11 @@ endLoop=0
 while (( $endLoop == 0 ))
 do
 
-
-echo -e "${Green}";
-
+echo "";
 echo "enter you query";
 echo "help -> 'h'";
 echo "Exit";
-echo -e "${LBlue}Please write your Query : \c ${NC}";
+echo -e "Please write your Query : \c ";
 read query;
 IFS=' ' read -r -a arr <<< "$query"
 
@@ -217,12 +202,10 @@ createFormatError=0
    then 
       createFormatError+=1
    else
-      i=${i,,}
       queryReformat+="$i"
       queryReformat+="$charDelimiter"
    fi
    done
-
 
 #echo "heree ${arr[0]}"
 queryType=${arr[0]}
@@ -255,13 +238,8 @@ case $queryType in
    fi
    ;;
 
-      
-
-
-
-
 "create")
-   if [[ $queryPartTable == "table" ]]
+  if [[ $queryPartTable == "table" ]]
    then
       if [[ $queryPartTableName ]]
       then
@@ -304,9 +282,10 @@ case $queryType in
       echo "-------------------------------------"
    fi 
    ;;
-
 "show")
-   if [[ ${arr[1]} == "tables" ]]
+   queryPartTables=${arr[1]}
+   queryPartTables=${queryPartTables,,}
+   if [[ queryPartTables == "tables" ]]
    then
     listTables 
    else
@@ -315,26 +294,11 @@ case $queryType in
     echo "-------------------------------------"
    fi
    ;;
-"select")
-     tableName=${arr[2]};	
-   if [[ ${arr[1]} == "from" ]] && [[  ${arr[3]} == "where" ]]&& [[  ${arr[4]} == "id" ]]
-   then
-   if [[ $tableName ]]
-      then
-	echo "hhhhkk"
-      fi
-   else
-    echo "-------------------------------------"
-    echo -e "${Red}Please Check your synax and try agains ${NC}"
-    echo "-------------------------------------"
-   fi
-   ;;
+
    "drop")
-   if [[ ${arr[1]} == "table" ]]
+   if [[ $queryPartTableName == "table" ]]
    then
-       tableName=${arr[2]};
-       tableName+=".data";
-      if [[ -f  "$tableName" ]];
+    if [[ -d  "$queryPartTableName" ]]
       then 
           rm -f "$tableName";
           echo "------------------------"
@@ -356,19 +320,16 @@ case $queryType in
    . $startLocation/help.sh $startLocation
       currentDatabase
     ;;
-"database")
- . $startLocation/design.sh
-   currentDatabase
-    ;;   
+   
 "exit")
-   echo -e "${Red}System shudown ^_^ ${NC}" 
+   echo "System shudown ^_^" 
    #exit
    cd $startLocation;
    endLoop=$(( endLoop+1 ))	
     ;;
 *) 
    . $startLocation/design.sh
-   currentDatabase
+   currentDatabasee
    echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"
@@ -376,7 +337,3 @@ case $queryType in
 
 esac
 done
-
-
-
-
