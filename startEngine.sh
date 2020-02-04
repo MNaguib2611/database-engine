@@ -33,10 +33,10 @@ echo "Connect to Database";
 echo "Create Database ";
 echo "Drop Database";
 echo "Exit";
-echo "help -> 'h' ${NC}";
+echo "help -> 'h' ";
 echo -e "${LBlue}Please write your Query : \c ${NC}";
 
-
+# echo $PWD;
 read query;
 #echo "${y^^}"
 query=${query,,}
@@ -51,6 +51,7 @@ case $query in
    . $startLocation/help.sh $startLocation ;;
 
 "clear") 
+   clear;
    . $startLocation/design.sh
     echo -e "${NC}"
    ;;
@@ -58,6 +59,7 @@ case $query in
    echo -e "${Red}System shudown ^_^ ${NC}" 
    #exit
    cd $startLocation;
+   clear;
    endLoop=$(( endLoop+1 ))	
     ;;
 

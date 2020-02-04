@@ -18,13 +18,42 @@ function listTables
     echo -e "${NC}###############"
 }
 
+function checkIfTableExists
+{   
 
+   if [ -f "$1.data" ]
+      then
+      echo -e "${LBlue} $1 Table ${NC}";
+      #do nothing 
+      else
+        echo -e "${Red}No such Table ${NC}";
+        continue;
+   fi   
+}
 
 function selectFromTable
 {   
-   #$1->tableName
-   #$2 ->condition
-   echo "select"
+   VAR1="Linuxize"
+   VAR2="Linuxisze"
+
+
+   conditionWh=$2;
+   if [[ -z "$2" ]] 
+   then
+    checkIfTableExists $1;
+   clear;
+   . $startLocation/design.sh
+   currentDatabase
+   awk  '{print $0}' "$1.data"
+   else
+      if [ "$2" = "where" ]&&[ -n "$3" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
+      echo "Strings are equal."
+      else
+      echo -e "${Red}Please Check your synax and try again ${NC}"
+      fi 
+   fi
+   
+  
 }
 function deleteFromTable
 {   
@@ -162,14 +191,14 @@ startLocation=$1;
 databaseName=$2;
 
 function currentDatabase
-{
-echo "";
-echo "################################"
-echo -e "${Green} you are now in $databaseName db ${NC}";
+ {
+   echo "";
+   echo "################################"
+   echo -e "${Green} you are now in $databaseName db ${NC}";
 
-echo "################################"
-echo "";
-}
+   echo "################################"
+   echo "";
+ }
 
 currentDatabase
 
@@ -183,6 +212,7 @@ echo -e "${Green}";
 
 echo "enter you query";
 echo "help -> 'h'";
+echo "Home";
 echo "Exit";
 echo -e "${LBlue}Please write your Query : \c ${NC}";
 read query;
@@ -281,19 +311,21 @@ case $queryType in
    ;;
 "select")
      tableName=${arr[2]};	
-   if [[ ${arr[1]} == "from" ]] && [[  ${arr[3]} == "where" ]]&& [[  ${arr[4]} == "id" ]]
+   if [[ ${arr[1]} == "from" ]] && [[  tableName ]]
    then
-   if [[ $tableName ]]
-      then
-	echo "hhhhkk"
-      fi
+   selectFromTable ${arr[2]} ${arr[3]} ${arr[4]} ${arr[5]}  ${arr[6]}
    else
     echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try agains ${NC}"
     echo "-------------------------------------"
    fi
    ;;
-   "drop")
+
+"check")
+   checkIfTableExists ${arr[1]}
+;;
+
+"drop")
    if [[ ${arr[1]} == "table" ]]
    then
        tableName=${arr[2]};
@@ -323,11 +355,26 @@ case $queryType in
 "database")
  . $startLocation/design.sh
    currentDatabase
-    ;;   
+    ;; 
+ "clear") 
+   clear;
+   . $startLocation/design.sh
+   currentDatabase
+    echo -e "${NC}"
+   ;;   
+ "home")
+   cd ..;
+   clear;
+    . $startLocation/design.sh
+   break;
+   
+   continue;
+    ;;     
 "exit")
    echo -e "${Red}System shudown ^_^ ${NC}" 
    #exit
    cd $startLocation;
+   clear;
    endLoop=$(( endLoop+1 ))	
     ;;
 *) 
