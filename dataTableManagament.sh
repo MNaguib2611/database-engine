@@ -179,12 +179,12 @@ while (( $endLoop == 0 ))
 do
 
 
-echo "";
+echo -e "${Green}";
 
 echo "enter you query";
 echo "help -> 'h'";
 echo "Exit";
-echo -e "Please write your Query : \c ";
+echo -e "${LBlue}Please write your Query : \c ${NC}";
 read query;
 IFS=' ' read -r -a arr <<< "$query"
 

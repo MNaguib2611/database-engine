@@ -27,14 +27,14 @@ endLoop=0
 while (( $endLoop == 0 ))
 do
 
-echo "";
+echo -e "${Green}";
 echo "List Databases ";
 echo "Connect to Database";
 echo "Create Database ";
 echo "Drop Database";
 echo "Exit";
-echo "help -> 'h'";
-echo -e "Please write your Query : \c ";
+echo "help -> 'h' ${NC}";
+echo -e "${LBlue}Please write your Query : \c ${NC}";
 
 
 read query;
