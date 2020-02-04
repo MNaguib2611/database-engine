@@ -4,7 +4,7 @@
 function listTables
 {   
    echo "Tables list"
-    echo -e "###############${LBlue}"
+    echo -e "${NC}###############${LBlue}"
     for f in *.data
     do
       if [[ $f == "*.data" ]]
@@ -31,12 +31,8 @@ function checkIfTableExists
 }
 
 function selectFromTable
-{   
-   VAR1="Linuxize"
-   VAR2="Linuxisze"
-
-
-   conditionWh=$2;
+{    
+  conditionWh=$2;
    if [[ -z "$2" ]] 
    then
     checkIfTableExists $1;
@@ -193,9 +189,9 @@ function currentDatabase
  {
    echo "";
    echo "################################"
-   echo -e "${Green} you are now in $databaseName db ${NC}";
+   echo -e "${Green} you are now in $databaseName db ";
 
-   echo "################################"
+   echo -e "${Yellow}################################"
    echo "";
  }
 
@@ -206,7 +202,7 @@ endLoop=0
 while (( $endLoop == 0 ))
 do
 
-echo "";
+echo -e "${LBlue}";
 echo "enter you query";
 echo "help -> 'h'";
 echo "Home";
@@ -319,13 +315,13 @@ case $queryType in
    ;;
 "show")
    queryPartTables=${arr[1]}
+   echo $queryPartTables;
    queryPartTables=${queryPartTables,,}
-   if [[ queryPartTables == "tables" ]]
-   then
+   if [ "$queryPartTables" = "tables" ]; then
     listTables 
    else
     echo "-------------------------------------"
-    echo -e "${Red}Please Check your synax and try agains ${NC}"
+    echo -e "${Red}Please Check your synax and try d agains ${NC}"
     echo "-------------------------------------"
    fi
    ;;
@@ -389,7 +385,7 @@ case $queryType in
    continue;
     ;;     
 "exit")
-   echo "System shudown ^_^" 
+   echo -e "${Red}System shudown ^_^ ${NC}" 
    #exit
    cd $startLocation;
    clear;
