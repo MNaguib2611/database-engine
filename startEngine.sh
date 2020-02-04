@@ -20,6 +20,7 @@ then
 else
    mkdir $dataBaseLocation;
    echo -e "### welcome ###${NC}";
+   cd $dataBaseLocation
 fi
 
 
@@ -86,4 +87,3 @@ done
 # exit    to exit the database engine
 #
 #
-

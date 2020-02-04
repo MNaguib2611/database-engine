@@ -30,7 +30,7 @@ function listTables
 
 function createTable
 {
-   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName33 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    tableName=$1;
@@ -77,8 +77,8 @@ function createTable
      #i=$(( i+2))
      done
 
-  echo $checkFormat 
-  echo $loopend  
+  #echo $checkFormat 
+  #echo $loopend  
    if (( $checkFormat == $loopend ))    
       then
          if [[ ${ADDR[loopend]} == ")" ]]
