@@ -1,11 +1,7 @@
 ##! /bin/bash
 #! /usr/bin/bash
 
-Red='\033[0;31m'
-Green='\033[0;32m'
-Brown='\033[0;33m'
-Yellow='\033[1;33m'
-NC='\033[0m' # No Color
+
 
 function listDatabases()
 {   
@@ -20,7 +16,7 @@ function listDatabases()
         continue
       else
          IFS='/' read -ra my_array <<< "$d"
-         echo -e "${Brown} ${my_array[0]} ${NC}"
+         echo -e "${LBlue} ${my_array[0]} ${NC}"
     fi
     done
     echo "###############"
@@ -49,7 +45,7 @@ function connectToDatabase()
          #echo "0";
          
             echo "-----------------------------"
-            echo -e "${Yellow} $databaseName db does not exist ${NC}"
+            echo -e "${Red} $ please enter database name${NC}"
             echo "-----------------------------"
       fi
                  
@@ -57,7 +53,7 @@ function connectToDatabase()
       #echo "0";
       
          echo "-----------------------------"
-         echo -e "${Yellow} $databaseName db does not exist ${NC}"
+         echo -e "${Red} $databaseName db does not exist ${NC}"
          echo "-----------------------------"
     fi
 }
@@ -66,14 +62,26 @@ function createDatabase()
 {
 
    databaseName=$1
+
    databaseNameLen=`echo -n $databaseName | wc -m`
    if [[ $databaseNameLen != 0 ]]
    then
+	
+	
+	#disallowing special characters in db names
+	#if [[ $databaseName == *['!'@#\$%^\&*()-+\.\/]* ]]; then
+	if [[ $databaseName != +([A-Za-z0-9]) ]]; then
+		echo 
+		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+		continue
+	fi
+
+   
       if [ -d "$databaseName" ];
       then
          #echo "1";
             echo "---------------------------"
-           echo -e "${Yellow}the database already exists ${NC}"
+           echo -e "${Red}the database already exists ${NC}"
             echo "---------------------------"
 
       else
@@ -110,7 +118,7 @@ function dropDatabase()
       else
          #echo "0";
             echo "------------------------------"
-              echo -e "${Yellow} $databaseName db does not exist ${NC}"
+              echo -e "${Red} $databaseName db does not exist ${NC}"
             echo "------------------------------"
       fi
                  

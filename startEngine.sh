@@ -2,13 +2,13 @@
 #! /usr/bin/bash
 
 
-
+. ./colors.sh
 
 
 startLocation=$PWD
 export startLocation;
 #to print the word Engine DB
-./design.sh
+. ./design.sh
 
 #to create "main dir" for the project it will contain all DBs & tables 
 cd $Home;
@@ -16,10 +16,10 @@ dataBaseLocation="DBScript"
 if [[ -e $dataBaseLocation ]]
 then 
    cd $dataBaseLocation;
-   echo "################################# wellcome Back ################################";
+   echo -e "################################# welcome Back ################################${NC}";
 else
    mkdir $dataBaseLocation;
-   echo "### wellcome ###";
+   echo -e "### welcome ###${NC}";
 fi
 
 
@@ -54,7 +54,7 @@ case $query in
    . $startLocation/design.sh
    ;;
 "exit")
-   echo "System shudown ^_^" 
+   echo -e "${Red}System shudown ^_^ ${NC}" 
    #exit
    cd $startLocation;
    endLoop=$(( endLoop+1 ))	

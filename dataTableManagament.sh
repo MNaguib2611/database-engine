@@ -4,7 +4,7 @@
 function listTables
 {   
    echo "Tables list"
-    echo -e "###############${Brown}"
+    echo -e "###############${LBlue}"
     for f in *.data
     do
       if [[ $f == "*.data" ]]
@@ -18,10 +18,20 @@ function listTables
     echo -e "${NC}###############"
 }
 
-# function listTableData
-# {   
-#    echo "listTableData"
-# }
+
+
+function selectFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "select"
+}
+function deleteFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "Delete"
+}
 
  
 
@@ -150,7 +160,20 @@ case $queryType in
     echo "-------------------------------------"
    fi
    ;;
-
+"select")
+     tableName=${arr[2]};	
+   if [[ ${arr[1]} == "from" ]] && [[  ${arr[3]} == "where" ]]&& [[  ${arr[4]} == "id" ]]
+   then
+   if [[ $tableName ]]
+      then
+	echo "hhhhkk"
+      fi
+   else
+    echo "-------------------------------------"
+    echo -e "${Red}Please Check your synax and try agains ${NC}"
+    echo "-------------------------------------"
+   fi
+   ;;
    "drop")
    if [[ ${arr[1]} == "table" ]]
    then
@@ -178,16 +201,19 @@ case $queryType in
    . $startLocation/help.sh $startLocation
       currentDatabase
     ;;
-   
+"database")
+ . $startLocation/design.sh
+   currentDatabase
+    ;;   
 "exit")
-   echo "System shudown ^_^" 
+   echo -e "${Red}System shudown ^_^ ${NC}" 
    #exit
    cd $startLocation;
    endLoop=$(( endLoop+1 ))	
     ;;
 *) 
    . $startLocation/design.sh
-   currentDatabasee
+   currentDatabase
    echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"
