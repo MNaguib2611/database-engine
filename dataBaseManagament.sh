@@ -6,20 +6,20 @@
 function listDatabases()
 {   
     #echo "pwd $PWD"
-    echo ""
-    echo "###############"
+    echo -e "${LBlue} Databases :- ${NC}"
+   
     for d in */
     do
       if [[ $d == "*/" ]]
       then
-        echo "Empty"
+         echo -e "${LBlue} Empty ${NC}"
         continue
       else
          IFS='/' read -ra my_array <<< "$d"
          echo -e "${LBlue} ${my_array[0]} ${NC}"
     fi
     done
-    echo "###############"
+    
 }
 
 function connectToDatabase()

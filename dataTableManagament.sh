@@ -20,7 +20,6 @@ function listTables
 
 function checkIfTableExists
 {   
-
    if [ -f "$1.data" ]
       then
       echo -e "${LBlue} $1 Table ${NC}";
@@ -67,21 +66,15 @@ function deleteFromTable
 function createTable
 {
    # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName55 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    tableName=$1;
    queryReformat=$2;
    queryReformatLength=$3
 
-   #echo $queryReformatLength
    IFS=':' read -ra ADDR <<< "$queryReformat"
-   
-   #for i in "${ADDR[@]}"; 
-   #do
-   #  echo "$i" 
-   #done
-  checkFormat=4
-  if [[ ${ADDR[3]} == "(" ]]
+   checkFormat=4
+   if [[ ${ADDR[3]} == "(" ]]
     then 
     loopend=$(( queryReformatLength-1 ))
     for ((i = 4; i < $loopend ;));
@@ -109,12 +102,9 @@ function createTable
        echo -e "${Red}Hint : maybe forget '(' ${NC}"
        echo "-------------------------------------" 
      fi
-     #echo ${ADDR[$i]}; 
-     #i=$(( i+2))
+    
      done
 
-  echo $checkFormat 
-  echo $loopend  
    if (( $checkFormat == $loopend ))    
       then
          if [[ ${ADDR[loopend]} == ")" ]]
@@ -173,19 +163,28 @@ function createTable
       echo "-------------------------------------"
    fi
 
-
-   #echo "createTable"
-
-   #echo "$tableName"
-   #echo "$queryReformat"
-
-echo "################################"    
 }
 
 function dropTable
 {
  echo $1
 }
+
+function insertIntoTable
+{   
+queryReformat=$1 
+queryReformatLength=$2
+echo $queryReformat
+echo $queryReformatLength
+
+while IFS= read -r line
+do
+  echo "$line"
+done < meta.txt
+
+}
+
+
 
 startLocation=$1;
 databaseName=$2;
@@ -207,14 +206,12 @@ endLoop=0
 while (( $endLoop == 0 ))
 do
 
-
-echo -e "${Green}";
-
+echo "";
 echo "enter you query";
 echo "help -> 'h'";
 echo "Home";
 echo "Exit";
-echo -e "${LBlue}Please write your Query : \c ${NC}";
+echo -e "Please write your Query : \c ";
 read query;
 IFS=' ' read -r -a arr <<< "$query"
 
@@ -243,27 +240,48 @@ createFormatError=0
    done
 
 #echo "heree ${arr[0]}"
-queryType=${arr[0]};
+queryType=${arr[0]}
+queryType=${queryType,,}
+queryPartTable=${arr[1]}
+queryPartTable=${queryPartTable,,}
+queryPartTableName=${arr[2]}
 
 
 case $queryType in
-"create")
-   syntaxTableWord=${arr[1]};
-   if [[ $syntaxTableWord == "table" ]]
+"insertinto")
+     #echo $queryReformat
+     #echo $queryReformatLength
+     #sleep 6
+   if [[ $queryPartTable == "table" ]]
    then
-      tableName=${arr[2]};
-      if [[ $tableName != +([[:alnum:]]) ]]; then
-		echo 
-		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
-		continue
-	fi
+      if [[ -d  "$queryPartTableName" ]]
+      then 
+       cd $queryPartTableName
+       insertIntoTable $queryReformat $queryReformatLength
 
-      if [[ $tableName ]]
+
+      else
+      echo "-------------------------------------"
+      echo -e "${Red}No such Table ${NC}"
+      echo "-------------------------------------"
+      fi
+     
+   else      
+   echo "-------------------------------------"
+   echo -e "${Red}Please Check your synax and try agains ${NC}"
+   echo "-------------------------------------"
+   fi
+   ;;
+
+"create")
+  if [[ $queryPartTable == "table" ]]
+   then
+      if [[ $queryPartTableName ]]
       then
       tableNameExist=0;        
          for d in */
          do
-            if [[ $d == $tableName ]]
+            if [[ $d == $queryPartTableName ]]
             then
             tableNameExist=1;
             continue
@@ -284,7 +302,7 @@ case $queryType in
                echo -e "${Red}Please Check your synax and try again ${NC}"
                echo "-------------------------------------"
             else
-            createTable $tableName $queryReformat $queryReformatLength
+            createTable $queryPartTableName $queryReformat $queryReformatLength
             fi
          fi
 
@@ -300,7 +318,9 @@ case $queryType in
    fi 
    ;;
 "show")
-   if [[ ${arr[1]} == "tables" ]]
+   queryPartTables=${arr[1]}
+   queryPartTables=${queryPartTables,,}
+   if [[ queryPartTables == "tables" ]]
    then
     listTables 
    else
@@ -328,9 +348,7 @@ case $queryType in
 "drop")
    if [[ ${arr[1]} == "table" ]]
    then
-       tableName=${arr[2]};
-       tableName+=".data";
-      if [[ -f  "$tableName" ]];
+    if [[ -d  "$queryPartTableName" ]]
       then 
           rm -f "$tableName";
           echo "------------------------"
@@ -371,7 +389,7 @@ case $queryType in
    continue;
     ;;     
 "exit")
-   echo -e "${Red}System shudown ^_^ ${NC}" 
+   echo "System shudown ^_^" 
    #exit
    cd $startLocation;
    clear;
@@ -379,7 +397,7 @@ case $queryType in
     ;;
 *) 
    . $startLocation/design.sh
-   currentDatabase
+   currentDatabasee
    echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"
@@ -387,8 +405,3 @@ case $queryType in
 
 esac
 done
-
-
-
-
-
