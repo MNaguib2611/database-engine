@@ -4,7 +4,7 @@
 function listTables
 {   
    echo "Tables list"
-    echo -e "###############${LBlue}"
+    echo -e "###############${Brown}"
     for f in *.data
     do
       if [[ $f == "*.data" ]]
@@ -18,20 +18,13 @@ function listTables
     echo -e "${NC}###############"
 }
 
+# function listTableData
+# {   
+#    echo "listTableData"
+# }
 
 
-function selectFromTable
-{   
-   #$1->tableName
-   #$2 ->condition
-   echo "select"
-}
-function deleteFromTable
-{   
-   #$1->tableName
-   #$2 ->condition
-   echo "Delete"
-}
+
 
  
 
@@ -142,21 +135,38 @@ function createTable
       echo "-------------------------------------"
       echo -e "${Red}Please Check your synax and try again ${NC}"
       echo "-------------------------------------"
-   fi
-
-
-   #echo "createTable"
-
-   #echo "$tableName"
-   #echo "$queryReformat"
-
-echo "################################"    
+   fi  
 }
 
 function dropTable
 {
  echo $1
 }
+
+function insertIntoTable
+{   
+  
+queryReformat=$1 
+queryReformatLength=$2
+echo $queryReformat
+echo $queryReformatLength
+
+}
+
+
+function selectFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "select"
+}
+function deleteFromTable
+{   
+   #$1->tableName
+   #$2 ->condition
+   echo "Delete"
+}
+
 
 startLocation=$1;
 databaseName=$2;
@@ -207,33 +217,58 @@ createFormatError=0
    then 
       createFormatError+=1
    else
+      i=${i,,}
       queryReformat+="$i"
       queryReformat+="$charDelimiter"
    fi
    done
 
+
 #echo "heree ${arr[0]}"
-queryType=${arr[0]};
+queryType=${arr[0]}
+queryType=${queryType,,}
+queryPartTable=${arr[1]}
+queryPartTable=${queryPartTable,,}
+queryPartTableName=${arr[2]}
 
 
 case $queryType in
-"create")
-   syntaxTableWord=${arr[1]};
-   if [[ $syntaxTableWord == "table" ]]
+"insertinto")
+   if [[ $queryPartTable == "table" ]]
    then
-      tableName=${arr[2]};
-      if [[ $tableName != +([[:alnum:]]) ]]; then
-		echo 
-		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
-		continue
-	fi
+      if [[ -d  "$queryPartTableName" ]]
+      then 
+      
+       insertIntoTable queryReformat queryReformatLength
 
-      if [[ $tableName ]]
+
+      else
+      echo "-------------------------------------"
+      echo -e "${Red}No such Table ${NC}"
+      echo "-------------------------------------"
+      fi
+     
+   else      
+   echo "-------------------------------------"
+   echo -e "${Red}Please Check your synax and try agains ${NC}"
+   echo "-------------------------------------"
+   fi
+   ;;
+
+      
+
+
+
+
+"create")
+   if [[ $queryPartTable == "table" ]]
+   then
+      if [[ $queryPartTableName ]]
       then
       tableNameExist=0;        
          for d in */
          do
-            if [[ $d == $tableName ]]
+            if [[ $d == $queryPartTableName ]]
             then
             tableNameExist=1;
             continue
@@ -254,7 +289,7 @@ case $queryType in
                echo -e "${Red}Please Check your synax and try again ${NC}"
                echo "-------------------------------------"
             else
-            createTable $tableName $queryReformat $queryReformatLength
+            createTable $queryPartTableName $queryReformat $queryReformatLength
             fi
          fi
 
@@ -269,6 +304,7 @@ case $queryType in
       echo "-------------------------------------"
    fi 
    ;;
+
 "show")
    if [[ ${arr[1]} == "tables" ]]
    then
