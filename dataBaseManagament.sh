@@ -16,7 +16,7 @@ function listDatabases()
         continue
       else
          IFS='/' read -ra my_array <<< "$d"
-         echo -e "${LBlue} ${my_array[0]} ${NC}"
+         echo -e "${LBlue}${bold}  ${my_array[0]} ${normal} ${NC}"
     fi
     done
     

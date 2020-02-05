@@ -4,19 +4,20 @@
 function listTables
 {   
    echo "Tables list"
-    echo -e "${NC}###############${LBlue}"
+    echo -e "${Yellow}###############${LBlue}"
+    echo -e "${Green} Tables :- ${NC}"
    for d in */
     do
       if [[ $d == "*/" ]]
       then
-        echo -e "${Red}Empty${NC}"
+        echo -e "${Red}Empty"
         continue
       else
-       echo -e "${Green} ${d%.data} ${NC}"
-         # printf -e '%s\n' "${Green}${d%.data}"
+      IFS='/' read -ra my_array <<< "$d"
+         echo -e "${Green} ${bold} ${my_array[0]} ${normal}"
     fi
     done
-    echo -e "${NC}###############"
+    echo -e "${Yellow}###############${NC}"
 }
 
 function checkIfTableExists
