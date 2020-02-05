@@ -58,23 +58,21 @@ function connectToDatabase()
 
 function createDatabase()
 {
-
    databaseName=$1
-
    databaseNameLen=`echo -n $databaseName | wc -m`
    if [[ $databaseNameLen != 0 ]]
    then
-	
-	
 	#disallowing special characters in db names
-	#if [[ $databaseName == *['!'@#\$%^\&*()-+\.\/]* ]]; then
-	if [[ $databaseName != +([[:alnum:]]) ]]; then
-		echo 
-		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
-		continue
-	fi
-
    
+   case $databaseName in 
+   +([[:alnum:]]))
+      echo ""
+   ;;
+   *) 
+   echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+		continue
+   ;;  
+   esac
       if [ -d "$databaseName" ];
       then
          #echo "1";

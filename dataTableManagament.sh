@@ -5,14 +5,15 @@ function listTables
 {   
    echo "Tables list"
     echo -e "${NC}###############${LBlue}"
-    for f in *.data
+   for d in */
     do
-      if [[ $f == "*.data" ]]
+      if [[ $d == "*/" ]]
       then
         echo -e "${Red}Empty${NC}"
         continue
       else
-         printf '%s\n' "${f%.data}"
+       echo -e "${Green} ${d%.data} ${NC}"
+         # printf -e '%s\n' "${Green}${d%.data}"
     fi
     done
     echo -e "${NC}###############"
@@ -20,9 +21,9 @@ function listTables
 
 function checkIfTableExists
 {   
-   if [ -f "$1.data" ]
+   if [ -d "$1/" ]
       then
-      echo -e "${LBlue} $1 Table ${NC}";
+      echo -e "${Green} $1 Table Exists${NC}";
       #do nothing 
       else
         echo -e "${Red}No such Table ${NC}";
@@ -39,22 +40,86 @@ function selectFromTable
    clear;
    . $startLocation/design.sh
    currentDatabase
-   awk  '{print $0}' "$1.data"
+   cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
+   awk  '{print NR  ,$0}' "$1/data.txt";
+    echo -e "${NC}"
    else
-      if [ "$2" = "where" ]&&[ -n "$3" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
-      echo "Strings are equal."
+    echo -e "${Yellow}"
+      if [ "$2" = "where" ]&&[ "$3" = "linenumber" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
+      case $5 in 
+         +([0-9]))
+            case $4 in 
+               "<")
+                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
+               awk -v var="$5" '{if(NR<var)print NR,$0}'   "$1/data.txt";
+               ;;
+               ">")
+                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
+               awk -v var="$5" '{if(NR>var)print NR,$0}'   "$1/data.txt";
+               ;;
+               "=")
+                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
+               awk -v var="$5" '{if(NR==var)print NR,$0}'   "$1/data.txt";
+               ;;
+               *)
+               echo -e "${Red}Please enter a valid comparison operator${NC}"
+               ;;
+            esac
+         ;;
+         *)
+           echo -e "${Red}Please enter a valid number${NC}"
+         ;;
+      esac
+      
       else
-      echo -e "${Red}Please Check your synax and try again ${NC}"
+      echo -e "${Red}Please Check your synax and try again ${LBlue} (h)help${NC}"
       fi 
-   fi
-   
-  
+   fi 
 }
 function deleteFromTable
-{   
-   #$1->tableName
-   #$2 ->condition
-   echo "Delete"
+{    
+  conditionWh=$2;
+   if [[ -z "$2" ]] 
+   then
+    checkIfTableExists $1;
+   clear;
+   . $startLocation/design.sh
+   currentDatabase
+   awk  '{delete}' "$1/data.txt";
+   sed -i '1,$d' "$1/data.txt";
+    echo -e "${Green} $1 table has been emptied ${NC}"
+   else
+    echo -e "${Yellow}"
+      if [ "$2" = "where" ]&&[ "$3" = "linenumber" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
+      case $5 in 
+         +([0-9]))
+            case $4 in 
+               "<")
+               sed -i "1,$5d" "$1/data.txt";
+               echo -e "${Green} $1 table has been updated ${NC}"
+               ;;
+               ">")
+                sed -i "$5,$ d" "$1/data.txt";
+                echo -e "${Green} $1 table has been updated ${NC}"
+               ;;
+               "=")
+                  sed -i "$5d" "$1/data.txt";
+                  echo -e "${Green} $1 table has been updated ${NC}"
+               ;;
+               *)
+               echo -e "${Red}Please enter a valid comparison operator${NC}"
+               ;;
+            esac
+         ;;
+         *)
+           echo -e "${Red}Please enter a valid number${NC}"
+         ;;
+      esac
+      
+      else
+      echo -e "${Red}Please Check your synax and try again ${LBlue} (h)help${NC}"
+      fi 
+   fi 
 }
 
  
@@ -64,7 +129,19 @@ function createTable
    # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName55 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   tableName=$1;
+   # create table * ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table # ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+
+   ableName=$1;
+   case $tableName in 
+   +([[:alnum:]]))
+      echo ""
+   ;;
+   *) 
+   echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+		continue
+   ;;  
+   esac
    queryReformat=$2;
    queryReformatLength=$3
 
@@ -118,6 +195,7 @@ function createTable
                   touch data.txt 
                   touch meta.txt 
                   chmod +wrx *.txt
+                  
 
    # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
    # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
@@ -135,7 +213,6 @@ function createTable
                   echo "---------------------------"
                   echo -e "${Green} $tableName table has been created ${NC}"
                   echo "---------------------------"                
-
                fi
                      
 
@@ -152,7 +229,6 @@ function createTable
             echo "-------------------------------------"
 
       fi
-
    else
       echo "-------------------------------------"
       echo -e "${Red}Please Check your synax and try again ${NC}"
@@ -163,7 +239,17 @@ function createTable
 
 function dropTable
 {
- echo $1
+ if [[ -d  "$queryPartTableName" ]]
+      then 
+          rm -rf "$1";
+          echo "------------------------"
+            echo -e "${Green} $1 table has been deleted ${NC}"
+            echo "------------------------"
+      else
+      echo "-------------------------------------"
+      echo -e "${Red}No such Table ${NC}"
+      echo "-------------------------------------"
+      fi
 }
 
 function insertIntoTable
@@ -336,7 +422,17 @@ case $queryType in
     echo "-------------------------------------"
    fi
    ;;
-
+   "delete")
+     tableName=${arr[2]};	
+   if [[ ${arr[1]} == "from" ]] && [[  tableName ]]
+   then
+   deleteFromTable ${arr[2]} ${arr[3]} ${arr[4]} ${arr[5]}  ${arr[6]}
+   else
+    echo "-------------------------------------"
+    echo -e "${Red}Please Check your synax and try agains ${NC}"
+    echo "-------------------------------------"
+   fi
+   ;;
 "check")
    checkIfTableExists ${arr[1]}
 ;;
@@ -344,17 +440,7 @@ case $queryType in
 "drop")
    if [[ ${arr[1]} == "table" ]]
    then
-    if [[ -d  "$queryPartTableName" ]]
-      then 
-          rm -f "$tableName";
-          echo "------------------------"
-            echo -e "${Green} ${arr[2]} table has been deleted ${NC}"
-            echo "------------------------"
-      else
-      echo "-------------------------------------"
-      echo -e "${Red}No such Table ${NC}"
-      echo "-------------------------------------"
-      fi
+      dropTable ${arr[2]}
    else
     echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try agains ${NC}"
@@ -366,6 +452,10 @@ case $queryType in
    . $startLocation/help.sh $startLocation
       currentDatabase
     ;;
+"help")
+   . $startLocation/help.sh $startLocation
+      currentDatabase
+    ;;    
 "database")
  . $startLocation/design.sh
    currentDatabase
