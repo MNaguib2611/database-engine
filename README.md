@@ -1,4 +1,4 @@
-# Bash_DatabaseEngine
+# EngineDB
 Simple file based database engine written in bash.
 
 
