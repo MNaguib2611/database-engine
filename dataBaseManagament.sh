@@ -58,6 +58,7 @@ function connectToDatabase()
 
 function createDatabase()
 {
+   re="+([[:alnum:]])"
    databaseName=$1
    databaseNameLen=`echo -n $databaseName | wc -m`
    if [[ $databaseNameLen != 0 ]]
@@ -65,7 +66,7 @@ function createDatabase()
 	#disallowing special characters in db names
    
    case $databaseName in 
-   +([[:alnum:]]))
+   $re)
       echo ""
    ;;
    *) 

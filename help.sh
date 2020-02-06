@@ -26,7 +26,7 @@ DELETE FROM  tableName
 DELETE FROM  tableName WHERE linenumber (<,>,=) int"
 echo "you can create table -> 
 CREATE TABLE tableName 
-( colum1Name colum1DataType notNull/Null colum2Name colum2DataType notNull/Null ,...etc) "
+( colum1Name colum1DataType notNull/Nul colum2Name colum2DataType notNull/Nul ,...etc) "
 echo "you can insert into table -> 
 INSERTINTO TABLE tableName 
 ( colum1Name value colum2Name value ,...etc) "

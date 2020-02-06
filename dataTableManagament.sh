@@ -33,7 +33,8 @@ function checkIfTableExists
 }
 
 function selectFromTable
-{    
+{ 
+   re="+([0-9])"   
   conditionWh=$2;
    if [[ -z "$2" ]] 
    then
@@ -48,7 +49,7 @@ function selectFromTable
     echo -e "${Yellow}"
       if [ "$2" = "where" ]&&[ "$3" = "linenumber" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
       case $5 in 
-         +([0-9]))
+         $re )
             case $4 in 
                "<")
                 cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
@@ -79,6 +80,7 @@ function selectFromTable
 }
 function deleteFromTable
 {    
+   re="+([0-9])"
   conditionWh=$2;
    if [[ -z "$2" ]] 
    then
@@ -93,7 +95,7 @@ function deleteFromTable
     echo -e "${Yellow}"
       if [ "$2" = "where" ]&&[ "$3" = "linenumber" ]&&[ -n "$4" ]&&[ -n "$5" ]; then
       case $5 in 
-         +([0-9]))
+         $re)
             case $4 in 
                "<")
                sed -i "1,$5d" "$1/data.txt";
@@ -127,15 +129,16 @@ function deleteFromTable
 
 function createTable
 {
-   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName55 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table * ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table # ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table tableName55 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table tableName3 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table * ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table # ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
 
+   re= "+([[:alnum:]])"
    ableName=$1;
    case $tableName in 
-   +([[:alnum:]]))
+    $re )
       echo ""
    ;;
    *) 
@@ -159,7 +162,7 @@ function createTable
      then
          i=$(( i+1 ))
          checkFormat=$(( checkFormat+1 ))
-         if [ "${ADDR[i]}" = "notNull" ] || [ "${ADDR[i]}" = "Null" ]
+         if [ "${ADDR[i]}" = "notNull" ] || [ "${ADDR[i]}" = "Nul" ]
          then
          i=$(( i+1 ))
          checkFormat=$(( checkFormat+1 ))
@@ -198,9 +201,9 @@ function createTable
                   chmod +wrx *.txt
                   
 
-   # create table tableName ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName2 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
-   # create table tableName3 ( c1 text notNull c2 int Null c3 text notNull c4 int Null )
+   # create table tableName ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table tableName2 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table tableName3 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    
                   for ((i = 4; i < $loopend ;));
                   do 
@@ -254,32 +257,121 @@ function dropTable
 }
 
 function insertIntoTable
-{   
-queryReformat=$1 
-queryReformatLength=$2
-echo $queryReformat
-echo $queryReformatLength
+{ 
+   # insertinto table tableName c4 5 c1 "hi" c2 1  error c3 not found 
+   # insertinto table tableName c4 5 c1 5 c2 1 c3 6  insertion done
+   # insertinto table tableName c1 "hi" c2 "1" c3 "5" c4 "5" error datatype
+   # insertinto table tableName c1 "hi" c2 1 c3 "bye"  add null
+   # insertinto table tableName c1 "hi" c3 "5"  add null
+   # insertinto table tableName c1 "hi" c2 5 c3 "bye" c4 5  done
+   echo ""
+   echo "##############"
+   echo "inserting ..."
+   queryReformat=$1 
+   queryReformatLength=$2
 
-while IFS= read -r line
-do
-  echo "$line"
-done < meta.txt
+   metadata=""
+   charDelimiter=":"
+   nullVar="Nul "
+   numFormatLines=0
+   
+   checkDoInsertion=0
+   foundCloumCheck=0
+   insertedRow=""
+   
+   re='^[0-9]+([.][0-9]+)?$'
+
+   while IFS= read -r line
+   do
+   metadata+="$line"
+   metadata+=":"
+   numFormatLines=$(( numFormatLines+1 ))
+   done < meta.txt
+
+
+   IFS=$charDelimiter read -ra queryReformatArray <<< "$queryReformat"
+   IFS=$charDelimiter read -ra metadataArray <<< "$metadata"
+
+
+
+   var=0
+   for (( i = 0; i < $numFormatLines ;i++ ));
+   do 
+      insertedRow+=${metadataArray[$((var))]}
+      insertedRow+=$charDelimiter
+     
+      for (( j = 3; j < $queryReformatLength ; ))
+      do  
+      
+      if [[ ${metadataArray[$((var))]} == ${queryReformatArray[$((j))]} ]]
+      then
+         foundCloumCheck=$((foundCloumCheck+1))
+
+         if [[ ${metadataArray[$(( var+1 ))]} == "int" ]]
+         then
+            if ! [[ ${queryReformatArray[$((j+1))]} =~ $re ]] 
+            then
+               echo "DataType Error so NotInserted" 
+               checkDoInsertion=$((checkDoInsertion+1))
+            else
+               insertedRow+=${queryReformatArray[$((j+1))]}
+               insertedRow+=$charDelimiter
+            fi
+         else
+         insertedRow+=${queryReformatArray[$((j+1))]}
+         insertedRow+=$charDelimiter
+         fi  
+      fi
+      
+      j=$((j+2))
+      done
+
+      if [[ ${foundCloumCheck} == 0 ]]
+       then
+       echo "${metadataArray[$((var+2))]} $nullVar"
+         if [[ ${metadataArray[$((var+2))]} == $nullVar ]]
+         then
+           insertedRow+=$nullVar
+           insertedRow+=$charDelimiter
+          else
+            echo "Missing data ${metadataArray[$((var))]} nnn ${metadataArray[$((var+2))]} "
+            checkDoInsertion=$((checkDoInsertion+1))
+         fi
+    
+      fi
+      var=$(( var+3 )) 
+      foundCloumCheck=0
+   done
+
+   if [[ $checkDoInsertion == 0 ]]
+   then
+     echo $insertedRow >> data.txt  
+     echo "Insertion done "  
+     else
+     echo "Insertion Error "  
+   fi
+   
+   echo "##############"
+   echo ""
+   
+   cd ..
+
 
 }
 
 
 
-startLocation=$1;
-databaseName=$2;
+startLocation=$1
+databaseName=$2
 
 function currentDatabase
  {
-   echo "";
+   echo ""
    echo "################################"
-   echo -e "${Green} you are now in $databaseName db ";
+   echo -e "${Green} you are now in $databaseName db "
 
    echo -e "${Yellow}################################"
-   echo "";
+   echo ""
  }
 
 currentDatabase
@@ -313,7 +405,7 @@ createFormatError=0
    #echo $i
    do
    queryReformatLength=$(( queryReformatLength+1))
-   if [ $i == ":" ]
+   if [ $i == $charDelimiter ]
    then 
       createFormatError+=1
    else
