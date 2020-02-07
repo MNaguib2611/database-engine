@@ -58,22 +58,16 @@ function connectToDatabase()
 
 function createDatabase()
 {
-   re="+([[:alnum:]])"
    databaseName=$1
    databaseNameLen=`echo -n $databaseName | wc -m`
    if [[ $databaseNameLen != 0 ]]
    then
 	#disallowing special characters in db names
-   
-   case $databaseName in 
-   $re)
-      echo ""
-   ;;
-   *) 
-   echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+   if [[ $databaseName == *['!'@#\$%^\&*()-+\.\/]* ]]; then
+		echo 
+		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
 		continue
-   ;;  
-   esac
+	fi
       if [ -d "$databaseName" ];
       then
          #echo "1";
@@ -97,8 +91,7 @@ function createDatabase()
  
 }
 function dropDatabase()
-{
-    
+{    
    databaseName=$1
    databaseNameLen=`echo -n $databaseName | wc -m`
    if [[ $databaseNameLen != 0 ]]
@@ -124,7 +117,6 @@ function dropDatabase()
    echo -e "${Red}Please Check your synax and try again ${NC}"
     echo "-------------------------------------"
    fi
-
 }
 
 
@@ -151,9 +143,22 @@ case $queryType in
 
 
 "use") 
-   connectToDatabase $3 ;;
+   if [[ -z "$4" ]]  
+   then
+      clear
+     . $startLocation/design.sh
+      connectToDatabase $3 
+   else
+      echo "-------------------------------------"
+      echo -e "${Red}Please enter the name of one database${NC}"
+      echo -e "${Red}Please DO NOT use * as an argument${NC}"
+      echo "-------------------------------------"
+   fi   
+   ;;
 
 "create") 
+if [[ -z "$5" ]]  
+   then
    if [[ $3 == "database" ]]
    then
        if [[ -z $4 ]]
@@ -171,17 +176,31 @@ case $queryType in
     echo -e "${Red}Please Check your synax and try again ${NC}"
     echo "-------------------------------------"
    fi
+    else
+      echo "-------------------------------------"
+      echo -e "${Red}Please enter the name of one database${NC}"
+      echo -e "${Red}Please DO NOT use * as an argument${NC}"
+      echo "-------------------------------------"
+   fi   
    ;;
 
-"drop") 
-  if [[ $3 == "database" ]]
+"drop")
+ if [[ -z "$5" ]]  
    then
-      dropDatabase $4 
-   else
-    echo "-------------------------------------"
-    echo -e "${Red}Please Check your synax and try again ${NC}"
-    echo "-------------------------------------"
+   if [[ $3 == "database" ]]
+      then
+         dropDatabase $4 
+      else
+      echo "-------------------------------------"
+      echo -e "${Red}Please Check your synax and try again ${NC}"
+      echo "-------------------------------------"
    fi
+ else
+    echo "-------------------------------------"
+    echo -e "${Red}Please enter the name of one database${NC}"
+      echo -e "${Red}Please DO NOT use * as an argument${NC}"
+      echo "-------------------------------------"
+ fi     
    ;;
 
 *) 

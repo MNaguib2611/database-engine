@@ -42,8 +42,9 @@ function selectFromTable
    clear;
    . $startLocation/design.sh
    currentDatabase
-   cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
-   awk  '{print NR  ,$0}' "$1/data.txt";
+   # cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
+    awk -F: 'BEGIN{print "#"} {print "\t"$1}' "$1/meta.txt" | paste -sd '\t'
+   awk -F: '{print NR  "\t\t"$2"\t\t"$4"\t\t"$6"\t\t"$8"\t\t"$10"\t\t"$12"\t\t"$14"\t\t"$16"\t\t"}' "$1/data.txt";
     echo -e "${NC}"
    else
     echo -e "${Yellow}"
@@ -52,16 +53,16 @@ function selectFromTable
          $re )
             case $4 in 
                "<")
-                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
-               awk -v var="$5" '{if(NR<var)print NR,$0}'   "$1/data.txt";
+                awk -F: 'BEGIN{print "#"} {print "\t"$1}' "$1/meta.txt" | paste -sd '\t'
+                awk -F: -v var="$5" '{if(NR<var)print NR  "\t\t"$2"\t\t"$4"\t\t"$6"\t\t"$8"\t\t"$10"\t\t"$12"\t\t"$14"\t\t"$16"\t\t"}'   "$1/data.txt";
                ;;
                ">")
-                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
-               awk -v var="$5" '{if(NR>var)print NR,$0}'   "$1/data.txt";
+                awk -F: 'BEGIN{print "#"} {print "\t"$1}' "$1/meta.txt" | paste -sd '\t'
+                awk -F: -v var="$5" '{if(NR>var)print NR  "\t\t"$2"\t\t"$4"\t\t"$6"\t\t"$8"\t\t"$10"\t\t"$12"\t\t"$14"\t\t"$16"\t\t"}'   "$1/data.txt";
                ;;
                "=")
-                cut -f1 -d: "$1/meta.txt" | paste -sd '\t'
-               awk -v var="$5" '{if(NR==var)print NR,$0}'   "$1/data.txt";
+                awk -F: 'BEGIN{print "#"} {print "\t"$1}' "$1/meta.txt" | paste -sd '\t'
+                awk  -F: -v var="$5" '{if(NR==var)print NR  "\t\t"$2"\t\t"$4"\t\t"$6"\t\t"$8"\t\t"$10"\t\t"$12"\t\t"$14"\t\t"$16"\t\t"}'   "$1/data.txt";
                ;;
                *)
                echo -e "${Red}Please enter a valid comparison operator${NC}"
@@ -80,7 +81,6 @@ function selectFromTable
 }
 function deleteFromTable
 {    
-   re="+([0-9])"
   conditionWh=$2;
    if [[ -z "$2" ]] 
    then
@@ -88,7 +88,7 @@ function deleteFromTable
    clear;
    . $startLocation/design.sh
    currentDatabase
-   awk  '{delete}' "$1/data.txt";
+   sed -i "1,$ d" "$1/data.txt";
    sed -i '1,$d' "$1/data.txt";
     echo -e "${Green} $1 table has been emptied ${NC}"
    else
@@ -133,19 +133,14 @@ function createTable
    # create table tableName55 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    # create table tableName3 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    # create table * ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
-   # create table # ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table t ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
 
-   re= "+([[:alnum:]])"
-   ableName=$1;
-   case $tableName in 
-    $re )
-      echo ""
-   ;;
-   *) 
-   echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
+  tableName=$1;
+   if [[ $tableName == *['!'@#\$%^\&*()-+\.\/]* ]]; then
+		echo 
+		echo -e "${Red} ! @ # $ % ^ () + . -  are not allowed!${NC}"
 		continue
-   ;;  
-   esac
+	fi
    queryReformat=$2;
    queryReformatLength=$3
 
@@ -204,6 +199,7 @@ function createTable
    # create table tableName ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    # create table tableName2 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    # create table tableName3 ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
+   # create table t ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
    
                   for ((i = 4; i < $loopend ;));
                   do 
@@ -223,7 +219,7 @@ function createTable
          else
             echo "-------------------------------------"
             echo -e "${Red}Please Check your synax and try again ${NC}"
-            echo -e "${Red}Hint : maybe forget ')' ${NC}"
+            echo -e "${Red}Hint : maybe you forgot ')' ${NC}"
             echo "-------------------------------------"
          fi
 
@@ -263,9 +259,9 @@ function insertIntoTable
    # insertinto table tableName c1 "hi" c2 "1" c3 "5" c4 "5" error datatype
    # insertinto table tableName c1 "hi" c2 1 c3 "bye"  add null
    # insertinto table tableName c1 "hi" c3 "5"  add null
-   # insertinto table tableName c1 "hi" c2 5 c3 "bye" c4 5  done
+   # insertinto table tt c1 "hi" c2 5 c3 "bye" c4 5  done
    echo ""
-   echo "##############"
+   echo -e "${Yellow}##############"
    echo "inserting ..."
    queryReformat=$1 
    queryReformatLength=$2
@@ -311,7 +307,7 @@ function insertIntoTable
          then
             if ! [[ ${queryReformatArray[$((j+1))]} =~ $re ]] 
             then
-               echo "DataType Error so NotInserted" 
+               echo -e "${Red}DataType Error so NotInserted" 
                checkDoInsertion=$((checkDoInsertion+1))
             else
                insertedRow+=${queryReformatArray[$((j+1))]}
@@ -334,7 +330,7 @@ function insertIntoTable
            insertedRow+=$nullVar
            insertedRow+=$charDelimiter
           else
-            echo "Missing data ${metadataArray[$((var))]} nnn ${metadataArray[$((var+2))]} "
+            echo -e "${Red}Missing data ${metadataArray[$((var))]} nnn ${metadataArray[$((var+2))]} "
             checkDoInsertion=$((checkDoInsertion+1))
          fi
     
@@ -346,12 +342,12 @@ function insertIntoTable
    if [[ $checkDoInsertion == 0 ]]
    then
      echo $insertedRow >> data.txt  
-     echo "Insertion done "  
+     echo -e "${Green}Data has been Inserted"  
      else
-     echo "Insertion Error "  
+     echo -e "${Red}Insertion Error${NC}"  
    fi
    
-   echo "##############"
+   echo -e "${Yellow}##############${NC}"
    echo ""
    
    cd ..
@@ -367,7 +363,7 @@ databaseName=$2
 function currentDatabase
  {
    echo ""
-   echo "################################"
+   echo -e "${Yellow}################################"
    echo -e "${Green} you are now in $databaseName db "
 
    echo -e "${Yellow}################################"
@@ -469,7 +465,6 @@ case $queryType in
             echo -e "${Yellow}the table already exists ${NC}"
             echo "---------------------------"
          else
-
             #echo $queryReformat
             if (( $createFormatError != 0  ))
             then
@@ -505,10 +500,17 @@ case $queryType in
    fi
    ;;
 "select")
-     tableName=${arr[2]};	
+   tableName=${arr[2]};	
    if [[ ${arr[1]} == "from" ]] && [[  tableName ]]
    then
-   selectFromTable ${arr[2]} ${arr[3]} ${arr[4]} ${arr[5]}  ${arr[6]}
+    if [[ -z "${arr[3]}" ]] || [[ ${arr[3]} == "where" ]]
+    then
+      selectFromTable $tableName ${arr[3]} ${arr[4]} ${arr[5]}  ${arr[6]}
+    else
+      echo "-------------------------------------"
+      echo -e "${Red}Please Check your synax and try agains ${NC}"
+      echo "-------------------------------------"
+    fi  
    else
     echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try agains ${NC}"
@@ -527,18 +529,35 @@ case $queryType in
    fi
    ;;
 "check")
+ if [[ -z "${arr[2]}" ]]  
+   then
    checkIfTableExists ${arr[1]}
+   else
+   echo "-------------------------------------"
+   echo -e "${Red}Please enter the name of one database${NC}"
+   echo -e "${Red}Please DO NOT use * as an argument${NC}"
+   echo "-------------------------------------"
+fi 
 ;;
 
 "drop")
-   if [[ ${arr[1]} == "table" ]]
+   if [[ -z "${arr[3]}" ]]  
    then
-      dropTable ${arr[2]}
+      if [[ ${arr[1]} == "table" ]]
+      then
+         dropTable ${arr[2]}
+      else
+         echo "-------------------------------------"
+         echo -e "${Red}Please Check your synax and try agains ${NC}"
+         echo "-------------------------------------"
+      fi
    else
-    echo "-------------------------------------"
-    echo -e "${Red}Please Check your synax and try agains ${NC}"
-    echo "-------------------------------------"
-   fi
+      echo "-------------------------------------"
+      echo -e "${Red}Please enter the name of one database${NC}"
+      echo -e "${Red}Please DO NOT use * as an argument${NC}"
+      echo "-------------------------------------"
+   fi  
+   
    ;;
 
 "h")
@@ -576,7 +595,7 @@ case $queryType in
     ;;
 *) 
    . $startLocation/design.sh
-   currentDatabasee
+   currentDatabase
    echo "-------------------------------------"
     echo -e "${Red}Please Check your synax and try again ${NC}"
    echo "-------------------------------------"

@@ -31,6 +31,7 @@ echo "you can insert into table ->
 INSERTINTO TABLE tableName 
 ( colum1Name value colum2Name value ,...etc) "
 echo "you can drop a table-> DROP TABLE tableName "
+echo "you can clear screen-> clear "
 echo -e "you can go back to  main menu -> ${LBlue}home${Yellow}"
 echo -e "you can Exit EngineDB -> ${Red}exit${Yellow}"
 echo "##########################################"
