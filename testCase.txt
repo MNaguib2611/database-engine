@@ -14,21 +14,21 @@
 
  create table t ( c1 text notNull c2 int Nul c3 text notNull c4 int Nul )
 
- insertinto table t c1 "hi1" c2 5 c3 "bye"   c4 7  done
- insertinto table t c1 "hi2" c2 10 c3 "ok"   c4 11  done
- insertinto table t c1 "hi3" c2 12 c3 "done" c4 13  done
- insertinto table t c1 "hi4" c2 5 c3 "bye"   c4 7  done
- insertinto table t c1 "hi5" c2 10 c3 "ok"   c4 11  done
- insertinto table t c1 "hi6" c2 12 c3 "done" c4 13  done
+ insertinto table t c1 "hi1" c2 5 c3 "bye"   c4 7  
+ insertinto table t c1 "hi2" c2 10 c3 "ok"   c4 11  
+ insertinto table t c1 "hi3" c2 12 c3 "done" c4 13  
+ insertinto table t c1 "hi4" c2 5 c3 "bye"   c4 7  
+ insertinto table t c1 "hi5" c2 10 c3 "ok"   c4 11  
+ insertinto table t c1 "hi6" c2 12 c3 "done" c4 13  
  
  select from t
 
- insertinto table t c14 "hi" c2 5 c3 "bye" c4 5  done
- insertinto table t c1 "hi" c2 5 c3 "bye"  c4 "Str"  done
+ insertinto table t c14 "hi" c2 5 c3 "bye" c4 5       --------> not working
+ insertinto table t c1 "hi" c2 5 c3 "bye"  c4 "Str"   --------> not working
 
 
- select from xx
- select from t where dsadsad
+ select from xx              --------> not working
+ select from t where dsadsad --------> not working
  select from t
  select from t  where linenumber > 0
  select from t  where linenumber < 2

@@ -38,7 +38,7 @@ echo "help -> 'h' ";
 echo -e "${LBlue}Please write your Query : \c ${NC}";
 
 # echo $PWD;
-read query;
+read -e query;
 #echo "${y^^}"
 query=${query,,}
 #echo $query
@@ -70,22 +70,3 @@ case $query in
 
 esac
 done
-
-
-
-
-
-
-
-
-
-
-
-#note 
-#(list)  to list all databases
-#create database (iti)  to create a new database
-# connect to (iti)      to connect to iti database
-# drop database         to drop iti database
-# exit    to exit the database engine
-#
-#
